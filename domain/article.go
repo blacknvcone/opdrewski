@@ -6,7 +6,7 @@ import (
 )
 
 type Article struct {
-	ID      int64  `json:"_id"`
+	ID      string `json:"_id"`
 	Title   string `json:"title" validate:"required"`
 	Content string `json:"content" validate:"required"`
 	//Author    Author    `json:"author"`
@@ -16,9 +16,12 @@ type Article struct {
 
 type ArticleUseCase interface {
 	Fetch(ctx context.Context, cursor string) ([]Article, string, error)
-	GetByID(ctx context.Context, id int64) (Article, error)
+	GetByID(ctx context.Context, id string) (Article, error)
 	Store(ctx context.Context, ar *Article) error
 }
 
 type ArticleRepository interface {
+	Fetch(ctx context.Context, cursor string) ([]Article, string, error)
+	GetByID(ctx context.Context, id string) (Article, error)
+	Store(ctx context.Context, ar *Article) error
 }
