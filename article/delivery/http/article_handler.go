@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/blacknvcone/opdrewski/domain"
-	"github.com/labstack/echo"
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -16,35 +16,46 @@ type ArticleHandler struct {
 	AUseCase domain.ArticleUseCase
 }
 
-func NewArticleHandler(e *echo.Echo, aUse domain.ArticleUseCase) {
+func NewArticleHandler(router *gin.Engine, aUse domain.ArticleUseCase) {
 	handler := &ArticleHandler{
 		AUseCase: aUse,
 	}
-	e.GET("/articles", handler.FetchArticle)
-	e.POST("/article", handler.StoreArticle)
+
+	router.GET("/articles", handler.FetchArticle)
+	router.POST("/article", handler.StoreArticle)
 }
 
-func (a *ArticleHandler) FetchArticle(c echo.Context) error {
-	ctx := c.Request().Context()
+func (a *ArticleHandler) FetchArticle(g *gin.Context) {
+	ctx := g.Request.Context()
 	listAr, err := a.AUseCase.Fetch(ctx, bson.M{})
 	if err != nil {
-		return c.JSON(http.StatusBadGateway, ResponseError{Message: err.Error()})
+		g.JSON(http.StatusBadGateway, gin.H{
+			"Error":   true,
+			"Message": err.Error(),
+		})
+		return
 	}
 
-	return c.JSON(http.StatusOK, listAr)
+	g.JSON(http.StatusOK, gin.H{
+		"Error":   false,
+		"Message": "OK",
+		"data":    listAr,
+	})
 }
 
-func (a *ArticleHandler) StoreArticle(c echo.Context) (err error) {
+func (a *ArticleHandler) StoreArticle(g *gin.Context) {
 	article := domain.Article{}
-	err = c.Bind(&article)
+	err := g.Bind(&article)
 	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, err.Error())
+		g.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
 	}
-	ctx := c.Request().Context()
+	ctx := g.Request.Context()
 	res, err := a.AUseCase.Store(ctx, &article)
 	if err != nil {
-		return c.JSON(http.StatusBadGateway, err.Error())
+		g.JSON(http.StatusBadGateway, err.Error())
+		return
 	}
 
-	return c.JSON(http.StatusCreated, res)
+	g.JSON(http.StatusCreated, res)
 }

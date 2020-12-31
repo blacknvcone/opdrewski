@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/blacknvcone/opdrewski/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,10 +11,6 @@ import (
 )
 
 const collArticle = "articles"
-
-var (
-	dbName = "opdrewski"
-)
 
 type mgoArticleRepository struct {
 	db *mongo.Client
@@ -24,7 +21,7 @@ func NewMgoArticleRepository(db *mongo.Client) domain.ArticleRepository {
 }
 
 func (m *mgoArticleRepository) Fetch(ctx context.Context, filter bson.M) (res []*domain.Article, err error) {
-	coll := m.db.Database(dbName).Collection(collArticle)
+	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collArticle)
 	cur, err := coll.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -43,7 +40,7 @@ func (m *mgoArticleRepository) Fetch(ctx context.Context, filter bson.M) (res []
 }
 
 func (m *mgoArticleRepository) Store(ctx context.Context, ar *domain.Article) (interface{}, error) {
-	coll := m.db.Database(dbName).Collection(collArticle)
+	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collArticle)
 	res, err := coll.InsertOne(ctx, ar)
 	if err != nil {
 		log.Fatal("Error on Inserting the document : ", err)

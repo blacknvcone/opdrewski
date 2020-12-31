@@ -36,6 +36,10 @@ Just run command "go run <root_dir_project>/app/main.go"
 * Using echo web framework for REST API delivery layer
 * Create simple create and get function
 
+### 1.0.1
+* Removing echo web framework with gin gonic as REST engine
+* Adding pkg godotenv
+
 ## Reference
 Many thanks for article from this : 
 1. https://jobel.dev/unit-testing-using-mocks-for-golangs-api-with-domain-driven-design-clean-architecture/
