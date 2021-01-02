@@ -1,0 +1,16 @@
+2021-01-03T00:38:46.025+0700	FATAL	logger/logger.go:68	[Couldn't connect into mongo instance : server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, State: Connected, Average RTT: 0, Last error: connection() : dial tcp 127.0.0.1:27017: connect: connection refused }, ] }]
+github.com/blacknvcone/opdrewski/common/logger.(*Logger).Fatal
+	/home/raven/GoProject/opdrewski/common/logger/logger.go:68
+main.main
+	/home/raven/GoProject/opdrewski/app/main.go:46
+runtime.main
+	/usr/local/go/src/runtime/proc.go:204
+{"level":"fatal","ts":1609609273.4413736,"caller":"logger/logger.go:68","msg":"[Couldn't connect into mongo instance : server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, State: Connected, Average RTT: 0, Last error: connection() : dial tcp 127.0.0.1:27017: connect: connection refused }, ] }]","stacktrace":"github.com/blacknvcone/opdrewski/common/logger.(*Logger).Fatal\n\t/home/raven/GoProject/opdrewski/common/logger/logger.go:68\nmain.main\n\t/home/raven/GoProject/opdrewski/app/main.go:46\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:204"}
+{"level":"fatal","ts":1609609421.3073938,"caller":"logger/logger.go:68","msg":"[Couldn't connect into mongo instance : server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: localhost:27017, Type: Unknown, State: Connected, Average RTT: 0, Last error: connection() : dial tcp 127.0.0.1:27017: connect: connection refused }, ] }]","stacktrace":"github.com/blacknvcone/opdrewski/common/logger.(*Logger).Fatal\n\t/home/raven/GoProject/opdrewski/common/logger/logger.go:68\nmain.main\n\t/home/raven/GoProject/opdrewski/app/main.go:46\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:204"}
+{"level":"info","ts":1609609547.0724978,"caller":"logger/logger.go:76","msg":"Connected into databases !%!(EXTRA []interface {}=[])"}
+{"level":"info","ts":1609609580.685851,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1609610938.7885902,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1609611620.4478593,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1609611636.5344565,"caller":"logger/logger.go:52","msg":"[Title couldn't be null]"}
+{"level":"info","ts":1609611848.2166803,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1609611852.0284631,"caller":"logger/logger.go:52","msg":"[Title couldn't be null]"}

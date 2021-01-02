@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/blacknvcone/opdrewski/domain"
@@ -36,6 +37,12 @@ func (a *articleUseCase) Fetch(ctx context.Context, filter bson.M) (res []*domai
 func (a *articleUseCase) Store(ctx context.Context, ar *domain.Article) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(ctx, a.contextTimeout)
 	defer cancel()
+
+	//TODO : Adding strict validation soon
+	//Simple Validation
+	if ar.Title == "" {
+		return nil, errors.New("Title couldn't be null")
+	}
 
 	ar.ID = primitive.NewObjectID()
 	ar.CreatedAt = time.Now()
