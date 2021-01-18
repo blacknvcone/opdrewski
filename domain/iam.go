@@ -17,21 +17,21 @@ type IAMUser struct {
 	CreatedAt time.Time          `json:"created_at,omitempty" bson:"created_at"`
 }
 
-type TokenDetails struct {
-	AccessToken  string
-	RefreshToken string
-	AtExpires    int64
-	RtExpires    int64
+type IAMToken struct {
+	ID          primitive.ObjectID `json:"_id,omitempty"  bson:"_id"`
+	UID         string
+	AccessToken string
+	Expires     int64
 }
 
 type IAMUseCase interface {
-	//Authentication(ctx context.Context, req bson.M)
-	//RefreshToken(ctx context.Context, req bson.M)
 	AddUser(ctx context.Context, user *IAMUser) (interface{}, error)
 	Authentication(ctx context.Context, email string, password string) (interface{}, error)
+	GenerateToken(ctx context.Context, uid string) (*IAMToken, error)
 }
 
 type IAMRepository interface {
 	Fetch(ctx context.Context, filter bson.M) (*IAMUser, error)
 	StoreUser(ctx context.Context, user *IAMUser) (interface{}, error)
+	StoreToken(ctx context.Context, token *IAMToken) (interface{}, error)
 }

@@ -10,6 +10,7 @@ import (
 )
 
 const collIAMUser = "IAM_User"
+const collIAMToken = "IAM_Token"
 
 type mgoIAMRepository struct {
 	db *mongo.Client
@@ -39,5 +40,28 @@ func (m *mgoIAMRepository) StoreUser(ctx context.Context, iamu *domain.IAMUser) 
 	}
 
 	return res, nil
+
+}
+
+func (m *mgoIAMRepository) StoreToken(ctx context.Context, iamt *domain.IAMToken) (interface{}, error) {
+	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collIAMToken)
+	filter := bson.M{
+		"uid": iamt.UID,
+	}
+
+	updated := bson.M{
+		"$set": bson.M{
+			"accesstoken": iamt.AccessToken,
+			"expires":     iamt.Expires,
+		},
+	}
+
+	res := coll.FindOneAndUpdate(ctx, filter, updated)
+	if res.Err() != nil {
+		coll.InsertOne(ctx, iamt)
+		return iamt, nil
+	} else {
+		return res.Decode(iamt), nil
+	}
 
 }

@@ -4,3 +4,17 @@
 {"level":"info","ts":1610992317.5365894,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
 {"level":"info","ts":1610992736.070215,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
 {"level":"info","ts":1610993040.8752096,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610999943.0969894,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610999948.7486103,"caller":"logger/logger.go:52","msg":"[key is of invalid type]"}
+{"level":"info","ts":1611000028.183588,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611000040.7689476,"caller":"logger/logger.go:52","msg":"[key is of invalid type]"}
+{"level":"info","ts":1611000202.6245284,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611000206.58126,"caller":"logger/logger.go:52","msg":"[key is of invalid type]"}
+{"level":"info","ts":1611000294.8726451,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611000451.2044165,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611000533.42785,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611000583.8510087,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611002008.7602975,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611002132.4650936,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611002280.7646315,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611002475.0503309,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
