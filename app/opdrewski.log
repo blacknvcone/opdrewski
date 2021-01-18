@@ -1,0 +1,6 @@
+{"level":"info","ts":1610991214.8188913,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610991991.0498273,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610992159.9065912,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610992317.5365894,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610992736.070215,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610993040.8752096,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}

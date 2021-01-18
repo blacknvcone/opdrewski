@@ -14,3 +14,20 @@ runtime.main
 {"level":"info","ts":1609611636.5344565,"caller":"logger/logger.go:52","msg":"[Title couldn't be null]"}
 {"level":"info","ts":1609611848.2166803,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
 {"level":"info","ts":1609611852.0284631,"caller":"logger/logger.go:52","msg":"[Title couldn't be null]"}
+{"level":"info","ts":1610957265.4397125,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610957568.571059,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610957707.097802,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610957805.7385068,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610961479.339798,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610961518.398942,"caller":"logger/logger.go:52","msg":"[Error parsing data]"}
+{"level":"info","ts":1610961706.0367718,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610961713.336969,"caller":"logger/logger.go:52","msg":"[Error parsing data]"}
+{"level":"info","ts":1610961771.2846363,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610961774.4806254,"caller":"logger/logger.go:52","msg":"[Error parsing data]"}
+{"level":"info","ts":1610962586.8281064,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610962748.7107797,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610962807.2028346,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610962832.3961673,"caller":"logger/logger.go:52","msg":"[Error parsing data]"}
+{"level":"info","ts":1610962872.3462079,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1610962876.078684,"caller":"logger/logger.go:52","msg":"[User Not Found or Password incorrect]"}
+{"level":"info","ts":1610992560.5864308,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
