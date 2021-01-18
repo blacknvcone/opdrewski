@@ -1,4 +1,4 @@
-package repository
+package helper
 
 import (
 	"encoding/base64"
