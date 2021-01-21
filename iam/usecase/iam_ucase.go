@@ -45,13 +45,8 @@ func (u *iamUseCase) ValidateTokenHTTP() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.Parse(ts, func(token *jwt.Token) (interface{}, error) {
-			if jwt.SigningMethodHS256 != token.Method {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-			}
-
-			return []byte("lontongbalap"), nil
-		})
+		//Verify
+		token, err := verifyToken(ts)
 
 		if token != nil && err == nil {
 			c.Next()
@@ -63,39 +58,75 @@ func (u *iamUseCase) ValidateTokenHTTP() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
 	}
 }
 
-func (u *iamUseCase) GenerateToken(ctx context.Context, uid string) (*domain.IAMToken, error) {
+func verifyToken(ts string) (*jwt.Token, error) {
+	token, err := jwt.Parse(ts, func(token *jwt.Token) (interface{}, error) {
+		//does this token conform to "SigningMethodHMAC" ?
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte("lontongbalap"), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (u *iamUseCase) ExtractSession(ctx context.Context, ts string) (*domain.IAMUser, error) {
+	//Verify
+	token, err := verifyToken(ts)
+	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
+
+	if ok && token.Valid {
+		q := bson.M{
+			"uuid": claims["UUID"],
+		}
+
+		iamtoken, err := u.IAMRepository.FetchSession(ctx, q)
+		if err != nil {
+			return nil, err
+		}
+
+		uid, err := primitive.ObjectIDFromHex(iamtoken.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		q = bson.M{
+			"_id": uid,
+		}
+
+		iamuser, err := u.IAMRepository.Fetch(ctx, q)
+		if err != nil {
+			return nil, err
+		}
+
+		return iamuser, nil
+
+	}
+	return nil, err
+}
+
+func (u *iamUseCase) GenerateToken(ctx context.Context, uuid string, expired int64) (string, int64, error) {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
 
-	uuidG := uuid.New().String()
 	expTime := time.Now().Add(5 * time.Minute)
 	claims := &claims{}
-	claims.UUID = uuidG
+	claims.UUID = uuid
 	claims.StandardClaims.ExpiresAt = expTime.Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte("lontongbalap")) //TODO : Make Secret to be params set
 	if err != nil {
-		return nil, err
+		return "", 0, err
 	}
 
-	iamt := &domain.IAMToken{}
-	iamt.ID = primitive.NewObjectID()
-	iamt.Expires = expTime.Unix()
-	iamt.AccessToken = tokenString
-	iamt.UUID = uuidG
-	iamt.UserID = uid
-
-	_, err = u.IAMRepository.StoreToken(ctx, iamt)
-	if err != nil {
-		return nil, err
-	}
-
-	return iamt, nil
+	return tokenString, expired, nil
 }
 
 func (u *iamUseCase) AddUser(ctx context.Context, user *domain.IAMUser) (interface{}, error) {
@@ -124,17 +155,33 @@ func (u *iamUseCase) Authentication(ctx context.Context, email string, password 
 		"password": helper.GetMD5Hash(password),
 	}
 
-	res, err := u.IAMRepository.Fetch(ctx, filter)
+	iamuser, err := u.IAMRepository.Fetch(ctx, filter)
 	if err != nil {
 		return nil, err
+	}
+
+	//Generate Session
+	uuidGen := uuid.New().String()
+	expSess := time.Now().Add(5 * time.Minute)
+
+	iams := &domain.IAMSession{}
+	iams.ID = primitive.NewObjectID()
+	iams.Expires = expSess.Unix()
+	iams.UUID = uuidGen
+	iams.UserID = iamuser.ID.Hex()
+
+	_, err = u.IAMRepository.StoreSession(ctx, iams)
+	if err != nil {
+		return "", err
 	}
 
 	//Generate Token
-	token, err := u.GenerateToken(ctx, res.ID.Hex())
+	expToken := time.Now().Add(5 * time.Minute)
+	token, exp, err := u.GenerateToken(ctx, uuidGen, expToken.Unix())
 	if err != nil {
 		return nil, err
 	}
 
-	return bson.M{"AccessToken": token.AccessToken, "Expires": token.Expires}, nil
+	return bson.M{"AccessToken": token, "Expires": exp}, nil
 
 }

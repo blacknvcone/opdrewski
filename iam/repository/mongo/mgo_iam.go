@@ -10,7 +10,7 @@ import (
 )
 
 const collIAMUser = "IAM_User"
-const collIAMToken = "IAM_Token"
+const collIAMSession = "IAM_Session"
 
 type mgoIAMRepository struct {
 	db *mongo.Client
@@ -43,8 +43,37 @@ func (m *mgoIAMRepository) StoreUser(ctx context.Context, iamu *domain.IAMUser) 
 
 }
 
-func (m *mgoIAMRepository) StoreToken(ctx context.Context, iamt *domain.IAMToken) (interface{}, error) {
-	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collIAMToken)
-	coll.InsertOne(ctx, iamt)
-	return iamt, nil
+func (m *mgoIAMRepository) StoreSession(ctx context.Context, iams *domain.IAMSession) (interface{}, error) {
+	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collIAMSession)
+	qF := bson.M{
+		"userid": iams.UserID,
+	}
+
+	//If User was have session, updating uuid and expires
+	qU := bson.M{
+		"$set": bson.M{
+			"uuid":    iams.UUID,
+			"expires": iams.Expires,
+		},
+	}
+
+	res := coll.FindOneAndUpdate(ctx, qF, qU)
+	if res.Err() != nil {
+		coll.InsertOne(ctx, iams)
+		return iams, nil
+	}
+	return res.Decode(iams), nil
+}
+
+func (m *mgoIAMRepository) FetchSession(ctx context.Context, filter bson.M) (IAMSession *domain.IAMSession, err error) {
+	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collIAMSession)
+	res := coll.FindOne(ctx, filter)
+
+	err = res.Decode(&IAMSession)
+	if err != nil {
+		return nil, bson.ErrDecodeToNil
+	}
+
+	return IAMSession, nil
+
 }

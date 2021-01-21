@@ -18,23 +18,24 @@ type IAMUser struct {
 	CreatedAt time.Time          `json:"created_at,omitempty" bson:"created_at"`
 }
 
-type IAMToken struct {
-	ID          primitive.ObjectID `json:"_id,omitempty"  bson:"_id"`
-	UUID        string             `json:",omitempty"`
-	UserID      string             `json:",omitempty"`
-	AccessToken string             `json:",omitempty"`
-	Expires     int64              `json:",omitempty"`
+type IAMSession struct {
+	ID      primitive.ObjectID `json:"_id,omitempty"  bson:"_id"`
+	UUID    string             `json:",omitempty"`
+	UserID  string             `json:",omitempty"`
+	Expires int64              `json:",omitempty"`
 }
 
 type IAMUseCase interface {
 	AddUser(ctx context.Context, user *IAMUser) (interface{}, error)
 	Authentication(ctx context.Context, email string, password string) (interface{}, error)
-	GenerateToken(ctx context.Context, uid string) (*IAMToken, error)
+	GenerateToken(ctx context.Context, uuid string, expired int64) (string, int64, error)
+	ExtractSession(ctx context.Context, ts string) (*IAMUser, error)
 	ValidateTokenHTTP() gin.HandlerFunc
 }
 
 type IAMRepository interface {
 	Fetch(ctx context.Context, filter bson.M) (*IAMUser, error)
 	StoreUser(ctx context.Context, user *IAMUser) (interface{}, error)
-	StoreToken(ctx context.Context, token *IAMToken) (interface{}, error)
+	StoreSession(ctx context.Context, session *IAMSession) (interface{}, error)
+	FetchSession(ctx context.Context, filter bson.M) (*IAMSession, error)
 }
