@@ -18,3 +18,25 @@
 {"level":"info","ts":1611002132.4650936,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
 {"level":"info","ts":1611002280.7646315,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
 {"level":"info","ts":1611002475.0503309,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611204012.0716908,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611204038.1856506,"caller":"logger/logger.go:52","msg":"[cannot Decode to nil value]"}
+{"level":"info","ts":1611204060.4263964,"caller":"logger/logger.go:52","msg":"[cannot Decode to nil value]"}
+{"level":"info","ts":1611213819.1046917,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611214287.1382155,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611214429.845724,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611214569.138138,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611214608.139293,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611214868.940351,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611214985.9789033,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611215185.0014098,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611215398.8517916,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611215892.4720716,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611216177.8038814,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611216335.3221,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611218509.05003,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611218918.5156503,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611219990.2036438,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611220166.4428537,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611220213.9675477,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611220233.6653829,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}
+{"level":"info","ts":1611220333.873144,"caller":"logger/logger.go:52","msg":"[Connected into databases !]"}

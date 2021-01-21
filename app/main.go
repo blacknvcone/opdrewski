@@ -57,13 +57,14 @@ func main() {
 
 	router := gin.New()
 	contextTimeout := time.Duration(10 * time.Second)
-	articleRepo := _articleRepo.NewMgoArticleRepository(cli)
-	articleUsecase := _articleUseCase.NewArticleUseCase(articleRepo, contextTimeout)
-	_articleDelivery.NewArticleHandler(router, articleUsecase, logger)
 
 	iamRepo := _iamRepo.NewMgoIAMRepository(cli)
 	iamUseCase := _iamUseCase.NewIAMUseCase(iamRepo, contextTimeout)
 	_iamDelivery.NewIAMHandler(router, iamUseCase, logger)
+
+	articleRepo := _articleRepo.NewMgoArticleRepository(cli)
+	articleUsecase := _articleUseCase.NewArticleUseCase(articleRepo, contextTimeout)
+	_articleDelivery.NewArticleHandler(router, articleUsecase, iamUseCase, logger)
 
 	router.Run(":" + os.Getenv("SERVER_PORT"))
 

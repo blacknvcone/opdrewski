@@ -15,15 +15,18 @@ type ResponseError struct {
 
 type ArticleHandler struct {
 	AUseCase domain.ArticleUseCase
+	IUseCase domain.IAMUseCase
 	log      logger.LogInfoFormat
 }
 
-func NewArticleHandler(router *gin.Engine, aUse domain.ArticleUseCase, logger logger.LogInfoFormat) {
+func NewArticleHandler(router *gin.Engine, aUse domain.ArticleUseCase, iamUse domain.IAMUseCase, logger logger.LogInfoFormat) {
 	handler := &ArticleHandler{
 		AUseCase: aUse,
+		IUseCase: iamUse,
 		log:      logger,
 	}
 
+	router.Use(iamUse.ValidateTokenHTTP())
 	router.GET("/articles", handler.FetchArticle)
 	router.POST("/article", handler.StoreArticle)
 }

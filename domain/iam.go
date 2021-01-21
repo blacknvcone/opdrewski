@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -19,15 +20,17 @@ type IAMUser struct {
 
 type IAMToken struct {
 	ID          primitive.ObjectID `json:"_id,omitempty"  bson:"_id"`
-	UID         string
-	AccessToken string
-	Expires     int64
+	UUID        string             `json:",omitempty"`
+	UserID      string             `json:",omitempty"`
+	AccessToken string             `json:",omitempty"`
+	Expires     int64              `json:",omitempty"`
 }
 
 type IAMUseCase interface {
 	AddUser(ctx context.Context, user *IAMUser) (interface{}, error)
 	Authentication(ctx context.Context, email string, password string) (interface{}, error)
 	GenerateToken(ctx context.Context, uid string) (*IAMToken, error)
+	ValidateTokenHTTP() gin.HandlerFunc
 }
 
 type IAMRepository interface {

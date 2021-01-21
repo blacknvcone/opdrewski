@@ -45,23 +45,6 @@ func (m *mgoIAMRepository) StoreUser(ctx context.Context, iamu *domain.IAMUser) 
 
 func (m *mgoIAMRepository) StoreToken(ctx context.Context, iamt *domain.IAMToken) (interface{}, error) {
 	coll := m.db.Database(os.Getenv("MONGO_DB")).Collection(collIAMToken)
-	filter := bson.M{
-		"uid": iamt.UID,
-	}
-
-	updated := bson.M{
-		"$set": bson.M{
-			"accesstoken": iamt.AccessToken,
-			"expires":     iamt.Expires,
-		},
-	}
-
-	res := coll.FindOneAndUpdate(ctx, filter, updated)
-	if res.Err() != nil {
-		coll.InsertOne(ctx, iamt)
-		return iamt, nil
-	} else {
-		return res.Decode(iamt), nil
-	}
-
+	coll.InsertOne(ctx, iamt)
+	return iamt, nil
 }
