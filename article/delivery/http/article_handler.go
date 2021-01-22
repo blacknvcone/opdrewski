@@ -26,7 +26,7 @@ func NewArticleHandler(router *gin.Engine, aUse domain.ArticleUseCase, iamUse do
 		log:      logger,
 	}
 
-	router.Use(iamUse.ValidateTokenHTTP())
+	router.Use(iamUse.AuthorizationHTTP())
 	router.GET("/articles", handler.FetchArticle)
 	router.POST("/article", handler.StoreArticle)
 }

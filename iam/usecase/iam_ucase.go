@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -32,33 +33,20 @@ func NewIAMUseCase(repository domain.IAMRepository, timeout time.Duration) domai
 	}
 }
 
-func (u *iamUseCase) ValidateTokenHTTP() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//Retrieving Token
-		ts := c.Request.Header.Get("Authorization")
-		if ts == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error":   true,
-				"message": "Unauthorized",
-			})
-			c.Abort()
-			return
-		}
+func generateToken(ctx context.Context, uuid string, expired int64) (string, int64, error) {
 
-		//Verify
-		token, err := verifyToken(ts)
+	expTime := time.Now().Add(5 * time.Minute)
+	claims := &claims{}
+	claims.UUID = uuid
+	claims.StandardClaims.ExpiresAt = expTime.Unix()
 
-		if token != nil && err == nil {
-			c.Next()
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error":   true,
-				"message": "Invalid Token",
-			})
-			c.Abort()
-			return
-		}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte("lontongbalap")) //TODO : Make Secret to be params set
+	if err != nil {
+		return "", 0, err
 	}
+
+	return tokenString, expired, nil
 }
 
 func verifyToken(ts string) (*jwt.Token, error) {
@@ -76,7 +64,58 @@ func verifyToken(ts string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func (u *iamUseCase) ExtractSession(ctx context.Context, ts string) (*domain.IAMUser, error) {
+func (u *iamUseCase) AuthorizationHTTP() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//Retrieving Token
+		ts := c.Request.Header.Get("Authorization")
+		if ts == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":   true,
+				"message": "Unauthorized",
+			})
+			c.Abort()
+			return
+		}
+
+		//Verify
+		token, err := verifyToken(ts)
+		if token != nil && err == nil {
+			mClaims, ok := token.Claims.(jwt.MapClaims)
+			if ok && token.Valid {
+				//Validate Session
+				uuids, _ := mClaims["UUID"].(string)
+				_, err := u.ValidateSession(c.Request.Context(), uuids)
+				if err == nil {
+					c.Next()
+					return
+				}
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"error":   true,
+					"message": "Invalid Session",
+				})
+				c.Abort()
+				return
+
+			}
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":   true,
+				"message": "Invalid Token",
+			})
+			c.Abort()
+			return
+
+		}
+
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error":   true,
+			"message": "Invalid Token",
+		})
+		c.Abort()
+		return
+	}
+}
+
+func (u *iamUseCase) ExtractSession(ctx context.Context, ts string) (*domain.IAMSession, *domain.IAMUser, error) {
 	//Verify
 	token, err := verifyToken(ts)
 	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
@@ -86,14 +125,14 @@ func (u *iamUseCase) ExtractSession(ctx context.Context, ts string) (*domain.IAM
 			"uuid": claims["UUID"],
 		}
 
-		iamtoken, err := u.IAMRepository.FetchSession(ctx, q)
+		iamses, err := u.IAMRepository.FetchSession(ctx, q)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
-		uid, err := primitive.ObjectIDFromHex(iamtoken.UserID)
+		uid, err := primitive.ObjectIDFromHex(iamses.UserID)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		q = bson.M{
@@ -102,31 +141,13 @@ func (u *iamUseCase) ExtractSession(ctx context.Context, ts string) (*domain.IAM
 
 		iamuser, err := u.IAMRepository.Fetch(ctx, q)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
-		return iamuser, nil
+		return iamses, iamuser, nil
 
 	}
-	return nil, err
-}
-
-func (u *iamUseCase) GenerateToken(ctx context.Context, uuid string, expired int64) (string, int64, error) {
-	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
-	defer cancel()
-
-	expTime := time.Now().Add(5 * time.Minute)
-	claims := &claims{}
-	claims.UUID = uuid
-	claims.StandardClaims.ExpiresAt = expTime.Unix()
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte("lontongbalap")) //TODO : Make Secret to be params set
-	if err != nil {
-		return "", 0, err
-	}
-
-	return tokenString, expired, nil
+	return nil, nil, err
 }
 
 func (u *iamUseCase) AddUser(ctx context.Context, user *domain.IAMUser) (interface{}, error) {
@@ -177,11 +198,39 @@ func (u *iamUseCase) Authentication(ctx context.Context, email string, password 
 
 	//Generate Token
 	expToken := time.Now().Add(5 * time.Minute)
-	token, exp, err := u.GenerateToken(ctx, uuidGen, expToken.Unix())
+	token, exp, err := generateToken(ctx, uuidGen, expToken.Unix())
 	if err != nil {
 		return nil, err
 	}
 
 	return bson.M{"AccessToken": token, "Expires": exp}, nil
+}
+
+func (u *iamUseCase) ValidateSession(ctx context.Context, uuid string) (interface{}, error) {
+
+	q := bson.M{
+		"uuid": uuid,
+	}
+
+	iamsess, err := u.IAMRepository.FetchSession(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+
+	//verify time expired
+	expTime := time.Now().Unix()
+
+	if iamsess.Expires < expTime {
+		return nil, errors.New("Invalid Session")
+	}
+
+	iamsess.Expires = time.Now().Add(5 * time.Minute).Unix()
+
+	resUpd, err := u.IAMRepository.StoreSession(ctx, iamsess)
+	if err != nil {
+		return nil, err
+	}
+
+	return resUpd, nil
 
 }

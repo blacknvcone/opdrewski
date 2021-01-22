@@ -28,9 +28,9 @@ type IAMSession struct {
 type IAMUseCase interface {
 	AddUser(ctx context.Context, user *IAMUser) (interface{}, error)
 	Authentication(ctx context.Context, email string, password string) (interface{}, error)
-	GenerateToken(ctx context.Context, uuid string, expired int64) (string, int64, error)
-	ExtractSession(ctx context.Context, ts string) (*IAMUser, error)
-	ValidateTokenHTTP() gin.HandlerFunc
+	ExtractSession(ctx context.Context, ts string) (*IAMSession, *IAMUser, error)
+	ValidateSession(ctx context.Context, uuid string) (interface{}, error)
+	AuthorizationHTTP() gin.HandlerFunc
 }
 
 type IAMRepository interface {
